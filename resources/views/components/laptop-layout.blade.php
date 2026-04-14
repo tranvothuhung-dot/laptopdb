@@ -151,7 +151,7 @@
                                 {{ Auth::user()->name }}
                                 </button>
                                 <div class="dropdown-menu">
-                                <a class="dropdown-item" href="">Quản lý</a>
+                                <a class="dropdown-item" href="{{ route('sanpham.index') }}">Quản lý</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <a class="dropdown-item" onclick="event.preventDefault();
@@ -160,12 +160,8 @@
                                 </div>
                             </div>
                         @else
-                            <a href="{{ route('login') }}">
-                                <button class='btn btn-sm btn-primary'>Đăng nhập</button>
-                            </a>&nbsp;
-                            <a href="{{ route('register') }}">
-                                <button class='btn btn-sm btn-success'>Đăng ký</button>
-                            </a>
+                            <a href="{{ route('login') }}" class='btn btn-sm btn-primary'>Đăng nhập</a>&nbsp;
+                            <a href="{{ route('register') }}" class='btn btn-sm btn-success'>Đăng ký</a>
                         @endauth
                 </div>
             </nav>

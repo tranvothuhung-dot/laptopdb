@@ -88,7 +88,7 @@
                              class="product-img">
                     </td>
                     <td class="text-center">
-                        <a href="{{ route('sanpham.show', $sp->id) }}" class="btn-action btn-view">
+                        <a href="{{ route('laptop.chitiet', $sp->id) }}" class="btn-action btn-view">
                             Xem
                         </a>
 
