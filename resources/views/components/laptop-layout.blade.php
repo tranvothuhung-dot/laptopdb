@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{$title}}</title>
+    <title>Tài khoản</title>
     <link rel="stylesheet" href="{{asset('library/bootstrap.min.css')}}">
 
     <script src="{{asset('library/jquery.slim.min.js')}}"></script>
@@ -119,16 +119,15 @@
                         <ul class="navbar-nav">
                             @foreach($categories as $category)
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{url('laptop/theloai/'.$category->id)}}">{{$category->ten_danh_muc}}</a>
+                                    <a class="nav-link" href="{{url('laptop/danhmuc/'.$category->id)}}">{{$category->ten_danh_muc}}</a>
                                 </li>
                             @endforeach
                         </ul>
                     </div>
                     <div class="search-bar">
-                        <form method="post" action="{{url('/timkiem')}}">
-                            {{ csrf_field() }}
-                            <input type="text" name="keyword" placeholder="Tìm kiếm laptop...">
-                            <button class="search-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <form method="GET" action="{{ route('laptop.search') }}">
+                            <input type="text" name="keyword" placeholder="Tìm kiếm laptop..." value="{{ request('keyword') }}">
+                            <button class="search-btn" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                         </form>
                     </div>
                     <div style='color:white;position:relative' class='mr-2'>
@@ -140,7 +139,7 @@
                                     0
                                 @endif
                         </div>
-                        <a href="{{url('/gio-hang')}}" style='cursor:pointer;color:white;'>
+                        <a href="{{url('/cart')}}" style='cursor:pointer;color:white;'>
                             <i class="fa fa-cart-arrow-down fa-2x mr-2 mt-1" aria-hidden="true"></i>
                         </a>
                     </div>
