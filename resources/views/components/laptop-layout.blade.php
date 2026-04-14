@@ -124,10 +124,9 @@
                         </ul>
                     </div>
                     <div class="search-bar">
-                        <form method="post" action="{{url('/timkiem')}}">
-                            {{ csrf_field() }}
-                            <input type="text" name="keyword" placeholder="Tìm kiếm laptop...">
-                            <button class="search-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <form method="GET" action="{{ route('laptop.search') }}">
+                            <input type="text" name="keyword" placeholder="Tìm kiếm laptop..." value="{{ request('keyword') }}">
+                            <button class="search-btn" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                         </form>
                     </div>
                     <div style='color:white;position:relative' class='mr-2'>

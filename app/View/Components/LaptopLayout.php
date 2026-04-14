@@ -12,11 +12,12 @@ class LaptopLayout extends Component
      * Create a new component instance.
      */
     public $categories;
+    public $title;
  
-    public function __construct()
+    public function __construct($title = 'Laptop Store')
     {
-        //
         $this->categories = DB::table("danh_muc_laptop")->get();
+        $this->title = $title;
     }
 
     /**
