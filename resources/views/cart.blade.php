@@ -15,20 +15,28 @@
             <tr>
                 <th style="width: 50px;">STT</th>
                 <th>Tên sản phẩm</th>
-                <th style="width: 150px;">Số lượng</th>
+                <th style="width: 120px;">Số lượng</th>
                 <th>Đơn giá</th>
-                <th style="width: 100px;">Thao tác</th>
+                <th>Thành tiền</th>
+                <th style="width: 100px;">Xóa</th>
             </tr>
         </thead>
         <tbody>
-            @php $stt = 1; @endphp
+            @php
+                $stt = 1;
+                $total = 0;
+            @endphp
             @forelse($laptops as $laptop)
+                @php $subtotal = $cart[$laptop->id] * $laptop->gia; $total += $subtotal; @endphp
                 <tr>
                     <td>{{ $stt++ }}</td>
                     <td class="text-left">{{ $laptop->tieu_de }}</td>
                     <td>{{ $cart[$laptop->id] }}</td>
                     <td class="text-danger font-weight-bold">
                         {{ number_format($laptop->gia, 0, ',', '.') }}đ
+                    </td>
+                    <td class="text-danger font-weight-bold">
+                        {{ number_format($subtotal, 0, ',', '.') }}đ
                     </td>
                     <td>
                         <form action="{{ route('cart.delete') }}" method="POST">
@@ -40,10 +48,18 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">Giỏ hàng đang trống!</td>
+                    <td colspan="6">Giỏ hàng đang trống!</td>
                 </tr>
             @endforelse
         </tbody>
+        @if($total > 0)
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right font-weight-bold">Tổng cộng</td>
+                    <td class="text-danger font-weight-bold">{{ number_format($total, 0, ',', '.') }}đ</td>
+                </tr>
+            </tfoot>
+        @endif
     </table>
 
     @if(count($laptops) > 0)
@@ -58,7 +74,6 @@
                         <option value="2">Chuyển khoản</option>
                     </select>
                 </div>
-                <p class="text-muted">Sau khi nhấn ĐẶT HÀNG, đơn hàng sẽ được lưu và gửi email thông báo tới kien997@gmail.com.</p>
                 <button type="submit" class="btn btn-primary mt-2">ĐẶT HÀNG</button>
             </form>
         </div>

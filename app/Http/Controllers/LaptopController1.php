@@ -72,10 +72,9 @@ class LaptopController1 extends Controller
         ];
         $paymentMethodLabel = $paymentMethods[$request->hinh_thuc_thanh_toan] ?? 'Không xác định';
 
-        // Khai báo email admin bên ngoài để truyền vào transaction
-        $adminEmail = 'kien997@gmail.com';
+        $recipientEmail = Auth::user()->email;
 
-        DB::transaction(function() use ($request, $cart, $adminEmail, $paymentMethodLabel) {
+        DB::transaction(function() use ($request, $cart, $recipientEmail, $paymentMethodLabel) {
             // 1. Insert vào bảng don_hang 
             $orderId = DB::table('don_hang')->insertGetId([
                 'ngay_dat_hang' => now(),
@@ -88,25 +87,39 @@ class LaptopController1 extends Controller
             $ids = array_keys($cart);
             $laptops = DB::table('san_pham')->whereIn('id', $ids)->get();
             $details = [];
+            $orderItems = [];
+            $totalAmount = 0;
 
             foreach($laptops as $laptop) {
+                $quantity = $cart[$laptop->id];
+                $subtotal = $quantity * $laptop->gia;
+
                 $details[] = [
                     'ma_don_hang' => $orderId,
                     'laptop_id' => $laptop->id,
-                    'so_luong' => $cart[$laptop->id],
+                    'so_luong' => $quantity,
                     'don_gia' => $laptop->gia
                 ];
+
+                $orderItems[] = [
+                    'title' => $laptop->tieu_de,
+                    'quantity' => $quantity,
+                    'price' => $laptop->gia,
+                    'subtotal' => $subtotal,
+                ];
+
+                $totalAmount += $subtotal;
             }
             DB::table('chi_tiet_don_hang')->insert($details);
 
             // 3. Xóa giỏ hàng
             session()->forget('cart');
 
-            // 4. Thực hiện gửi email thông báo cho Admin
-            Notification::route('mail', $adminEmail)->notify(new OrderNotification($orderId, $paymentMethodLabel));
+            // 4. Thực hiện gửi email xác nhận cho người đặt hàng
+            Notification::route('mail', $recipientEmail)->notify(new OrderNotification($orderId, $paymentMethodLabel, $orderItems, $totalAmount));
         });
 
-        return redirect()->route('cart.view')->with('success', 'Đặt hàng thành công và đã gửi email thông báo!');
+        return redirect()->route('cart.view')->with('success', 'Đặt hàng thành công và email xác nhận đã được gửi tới địa chỉ của bạn.');
     }
 
     public function search(Request $request) {

@@ -13,14 +13,18 @@ class OrderNotification extends Notification
 
     public $orderId;
     public $paymentMethod;
+    public $items;
+    public $total;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($orderId, $paymentMethod)
+    public function __construct($orderId, $paymentMethod, $items = [], $total = 0)
     {
         $this->orderId = $orderId;
         $this->paymentMethod = $paymentMethod;
+        $this->items = $items;
+        $this->total = $total;
     }
 
     /**
@@ -38,14 +42,20 @@ class OrderNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new \Illuminate\Notifications\Messages\MailMessage)
-                    ->subject('Thông báo: Có đơn hàng mới từ hệ thống!')
-                    ->line("Đơn hàng #{$this->orderId} đã được tạo.")
+        $mail = (new \Illuminate\Notifications\Messages\MailMessage)
+                    ->subject('Xác nhận đơn hàng #' . $this->orderId)
+                    ->greeting('Xin chào,')
+                    ->line("Đơn hàng #{$this->orderId} của bạn đã được ghi nhận.")
                     ->line("Hình thức thanh toán: {$this->paymentMethod}")
-                    ->line('Hệ thống vừa nhận được một đơn đặt hàng mới.')
-                    ->line('Vui lòng kiểm tra quản trị để xử lý.')
-                    ->action('Xem chi tiết đơn hàng', url('/admin/orders'))
-                    ->line('Cảm ơn bạn đã sử dụng hệ thống!');
+                    ->line('Chi tiết đơn hàng:');
+
+        foreach ($this->items as $item) {
+            $mail->line("- {$item['title']} x{$item['quantity']} : " . number_format($item['price'], 0, ',', '.') . "đ = " . number_format($item['subtotal'], 0, ',', '.') . "đ");
+        }
+
+        $mail->line('Tổng giá trị đơn hàng: ' . number_format($this->total, 0, ',', '.') . 'đ');
+
+        return $mail->line('Cảm ơn bạn đã đặt hàng và sử dụng dịch vụ của chúng tôi.');
     }
 
     /**
